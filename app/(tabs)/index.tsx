@@ -1,98 +1,254 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+// app/index.tsx
+import React, { useState } from 'react';
+import {
+  Box,
+  Heading,
+  Text,
+  Checkbox,
+  CheckboxGroup,
+  CheckboxIndicator,
+  CheckboxIcon,
+  CheckboxLabel,
+  CheckIcon,
+  Link,
+  LinkText,
+  Pressable,
+  Radio,
+  RadioGroup,
+  RadioIndicator,
+  RadioIcon,
+  RadioLabel,
+  CircleIcon,
+  Select,
+  SelectTrigger,
+  SelectInput,
+  SelectIcon,
+  SelectPortal,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicatorWrapper,
+  SelectDragIndicator,
+  SelectItem,
+  Icon,
+  ChevronDownIcon,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  Switch,
+  Textarea,
+  TextareaInput,
+  FormControl,
+  FormControlLabel,
+  FormControlLabelText,
+  VStack,
+  ScrollView,
+  HStack, // Asegúrate de importar HStack
+} from '@gluestack-ui/themed';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+// Este es el componente principal del formulario
+export default function FormScreen() {
+  // --- Estados para los componentes ---
 
-export default function HomeScreen() {
+  // Checkbox (5) + CheckboxGroup (10)
+  const [checkboxValues, setCheckboxValues] = useState(['frontend']);
+
+  // Pressable (5) + Cambiar color (10)
+  const [isPressed, setIsPressed] = useState(false);
+
+  // Radio (3) + RadioGroup + FormControl (10)
+  const [radioValue, setRadioValue] = useState('react');
+
+  // Select (3) + Select FormControlled (10)
+  const [selectValue, setSelectValue] = useState('js');
+
+  // Slider (3) + Max y Min (10)
+  const [sliderValue, setSliderValue] = useState(50);
+
+  // Switch (3) + Checked State (10)
+  const [switchValue, setSwitchValue] = useState(false);
+
+  // TextArea (5) + FormControl (10)
+  const [textAreaValue, setTextAreaValue] = useState('');
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <ScrollView>
+      <Box p="$4" bg="$white" flex={1}>
+        <VStack space="lg">
+          {/* --- 1. Checkbox --- */}
+          <FormControl>
+            <Heading size="md" mb="$2">
+              1. Checkbox + CheckboxGroup
+            </Heading>
+            <CheckboxGroup
+              value={checkboxValues}
+              onChange={(keys: string[]) => {
+                setCheckboxValues(keys);
+              }}
+            >
+              <VStack space="sm">
+                <Checkbox value="frontend">
+                  <CheckboxIndicator mr="$2">
+                    <CheckboxIcon as={CheckIcon} />
+                  </CheckboxIndicator>
+                  <CheckboxLabel>Frontend</CheckboxLabel>
+                </Checkbox>
+                <Checkbox value="backend">
+                  <CheckboxIndicator mr="$2">
+                    <CheckboxIcon as={CheckIcon} />
+                  </CheckboxIndicator>
+                  <CheckboxLabel>Backend</CheckboxLabel>
+                </Checkbox>
+              </VStack>
+            </CheckboxGroup>
+          </FormControl>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+          {/* --- 2. Link + Icon --- */}
+          <FormControl>
+            <Heading size="md" mb="$2">
+              2. Link + Icon
+            </Heading>
+            <Link href="https://gluestack.io/" isExternal>
+              <LinkText size="md" color="$blue600">
+                Visitar Gluestack UI
+              </LinkText>
+              <Icon as={ChevronDownIcon} size="sm" ml="$1" color="$blue600" />
+            </Link>
+          </FormControl>
+
+          {/* --- 3. Pressable --- */}
+          <FormControl>
+            <Heading size="md" mb="$2">
+              3. Pressable + Cambio de Color
+            </Heading>
+            <Pressable
+              onPressIn={() => setIsPressed(true)}
+              onPressOut={() => setIsPressed(false)}
+              p="$3"
+              bg={isPressed ? '$red600' : '$gray300'}
+            >
+              <Text color={isPressed ? '$white' : '$black'}>
+                ¡Presióname!
+              </Text>
+            </Pressable>
+          </FormControl>
+
+          {/* --- 4. RadioGroup + FormControl --- */}
+          <FormControl>
+            <FormControlLabel mb="$2">
+              <Heading size="md">4. RadioGroup + Form Control</Heading>
+            </FormControlLabel>
+            <RadioGroup
+              value={radioValue}
+              onChange={(nextValue: string) => {
+                setRadioValue(nextValue);
+              }}
+            >
+              <VStack space="sm">
+                <Radio value="react">
+                  <RadioIndicator mr="$2">
+                    <RadioIcon as={CircleIcon} />
+                  </RadioIndicator>
+                  <RadioLabel>React Native</RadioLabel>
+                </Radio>
+                <Radio value="flutter">
+                  <RadioIndicator mr="$2">
+                    <RadioIcon as={CircleIcon} />
+                  </RadioIndicator>
+                  <RadioLabel>Flutter</RadioLabel>
+                </Radio>
+              </VStack>
+            </RadioGroup>
+          </FormControl>
+
+          {/* --- 5. Select (FormControlled) --- */}
+          <FormControl>
+            <FormControlLabel mb="$2">
+              <Heading size="md">5. Select (FormControlled)</Heading>
+            </FormControlLabel>
+            <Select
+              selectedValue={selectValue}
+              onValueChange={(value: string) => setSelectValue(value)}
+            >
+              <SelectTrigger>
+                <SelectInput placeholder="Selecciona un lenguaje" />
+                <SelectIcon as={ChevronDownIcon} mr="$3" />
+              </SelectTrigger>
+              <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent>
+                  <SelectDragIndicatorWrapper>
+                    <SelectDragIndicator />
+                  </SelectDragIndicatorWrapper>
+                  <SelectItem label="JavaScript" value="js" />
+                  <SelectItem label="Python" value="py" />
+                  <SelectItem label="Java" value="java" />
+                </SelectContent>
+              </SelectPortal>
+            </Select>
+          </FormControl>
+
+         {/* --- 6. Slider + Max y Min --- */}
+          <FormControl>
+            <FormControlLabel mb="$2">
+              <Heading size="md">
+                6. Slider (Valor: {sliderValue.toFixed(0)})
+              </Heading>
+            </FormControlLabel>
+            <Slider
+              step={1}
+              value={sliderValue}
+              onChange={(value: number) => {
+                setSliderValue(value);
+              }}
+              minValue={0}
+              maxValue={100}
+            >
+              <SliderTrack 
+                h="$1.5" // <-- Dale una altura
+                rounded="$full" // <-- Redondea las esquinas
+                bg="$gray300" // <-- Dale un color de fondo
+              >
+                <SliderFilledTrack 
+                  h="$1.5" // <-- Misma altura
+                  rounded="$full" // <-- Misma redondez
+                  bg="$blue500" // <-- Color de relleno que combina con el punto
+                />
+              </SliderTrack>
+              
+              <SliderThumb />
+            </Slider>
+          </FormControl>
+
+          {/* --- 7. Switch + Checked State --- */}
+          <FormControl>
+            <Heading size="md" mb="$2">
+              7. Switch + Checked State
+            </Heading>
+            <HStack space="md" alignItems="center">
+              <Switch
+                value={switchValue}
+                onToggle={() => setSwitchValue(!switchValue)}
+              />
+              <Text>{switchValue ? 'Activado' : 'Desactivado'}</Text>
+            </HStack>
+          </FormControl>
+
+          {/* --- 8. TextArea + FormControl --- */}
+          <FormControl>
+            <FormControlLabel mb="$2">
+              <Heading size="md">8. TextArea + Form Control</Heading>
+            </FormControlLabel>
+            <Textarea h={100}>
+              <TextareaInput
+                placeholder="Escribe tus comentarios aquí..."
+                value={textAreaValue}
+                onChangeText={(text: string) => setTextAreaValue(text)}
+              />
+            </Textarea>
+          </FormControl>
+        </VStack>
+      </Box>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

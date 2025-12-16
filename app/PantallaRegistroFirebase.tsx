@@ -6,7 +6,7 @@ import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Database, getDatabase, ref, set } from 'firebase/database';
 
 // RUTA CORREGIDA: Acceso a la subcarpeta config/ dentro de app/
-import { firebaseApp } from './config/firebaseConfig';
+import { firebaseApp } from '../config/firebaseConfig';
 
 const PantallaRegistroFirebase = () => {
     // Inicializamos Realtime Database (RTDB) localmente

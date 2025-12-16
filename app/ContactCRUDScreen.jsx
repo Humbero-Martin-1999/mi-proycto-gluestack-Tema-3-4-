@@ -4,14 +4,12 @@ import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 // RUTA CORREGIDA: Acceso a la subcarpeta config/ dentro de app/
-// Asumiendo que has movido la carpeta config/ dentro de app/
-import { createContact, updateContact } from './config/firestoreService';
+import { createContact, updateContact } from '../config/firestoreService';
 
 // **********************************************
 // **** DEFINICIONES GLOBALES (FUERA DEL COMPONENTE) ****
 // **********************************************
 
-// ¡CORRECCIÓN! DEFINIR INITIAL_STATE AQUÍ
 const INITIAL_STATE = {
     firstName: '',
     lastName: '',
@@ -71,7 +69,7 @@ const ContactCRUDScreen = () => {
 
     const navigation = useNavigation();
 
-    // Estado para manejar el contacto, si estás editando, inicializa con los datos existentes
+    // Estado para manejar el contacto
     const [contactData, setContactData] = useState(
         isEditing ? existingContact : INITIAL_STATE
     );
@@ -81,10 +79,11 @@ const ContactCRUDScreen = () => {
         setContactData({ ...contactData, [name]: value });
     };
 
-    // Función para guardar (Crear o Actualizar)
+    // --- FUNCIÓN DE GUARDADO MODIFICADA CON ALERTAS ---
     const handleSave = async () => {
+        // 1. Validaciones básicas
         if (!contactData.firstName || !contactData.phone) {
-            Alert.alert('Error', 'Nombre y Teléfono son obligatorios.');
+            Alert.alert('Faltan datos', 'El Nombre y el Teléfono son obligatorios.');
             return;
         }
         
@@ -92,11 +91,27 @@ const ContactCRUDScreen = () => {
             if (isEditing) {
                 // Actualizar
                 await updateContact(existingContact.id, contactData);
+                
+                // Mensaje opcional para edición
+                Alert.alert("Actualizado", "Contacto actualizado correctamente.", [
+                    { text: "OK", onPress: () => navigation.goBack() }
+                ]);
             } else {
                 // Crear
                 await createContact(contactData);
+                
+                // --- MENSAJE DE ÉXITO SOLICITADO ---
+                Alert.alert(
+                    "¡Éxito!",
+                    "El contacto se subió a la base de datos de Firebase con éxito.",
+                    [
+                        { 
+                            text: "OK", 
+                            onPress: () => navigation.goBack() // Solo regresa al presionar OK
+                        }
+                    ]
+                );
             }
-            navigation.goBack(); // Volver a la lista
         } catch (error) {
             Alert.alert('Error', 'No se pudo guardar el contacto.');
             console.error(error);
@@ -138,6 +153,9 @@ const ContactCRUDScreen = () => {
                     keyboardType={field.keyboardType}
                 />
             ))}
+            
+            {/* Espacio extra al final */}
+            <View style={{ height: 40 }} />
         </ScrollView>
     );
 };
@@ -200,6 +218,5 @@ const styles = StyleSheet.create({
         paddingVertical: 2,
     }
 });
-
 
 export default ContactCRUDScreen;

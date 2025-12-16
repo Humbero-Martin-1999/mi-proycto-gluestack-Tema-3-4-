@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 // RUTA CORREGIDA: Acceso a la subcarpeta config/ dentro de app/
-import { deleteContact, getContactsStream } from './config/firestoreService';
+import { deleteContact, getContactsStream } from '../config/firestoreService';
 
 // Componente para cada fila de contacto
 const ContactListItem = ({ contact, onDelete, onEdit, onDetail }) => (
@@ -66,7 +66,7 @@ const ContactListScreen = () => {
     const handleDetail = (contact) => {
         // Navegar a la pantalla de detalle, pasando el contacto como parámetro
         // La ruta es el nombre del archivo: /ContactDetailScreen
-        router.push({ pathname: '/ContactDetailScreen', params: { contact: JSON.stringify(contact) } });
+        router.push({ pathname: '/ContactDetailScreen', params: { contactId: contact.id } });
     };
 
     if (loading) {

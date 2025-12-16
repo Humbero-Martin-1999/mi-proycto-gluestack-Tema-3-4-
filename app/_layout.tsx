@@ -1,9 +1,13 @@
 // app/_layout.tsx
+import 'react-native-gesture-handler';
+
 import { config } from '@gluestack-ui/config';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { Drawer } from 'expo-router/drawer';
 import React from 'react';
-import 'react-native-gesture-handler'; // <-- IMPORTANTE: Siempre debe ser la primera línea
+
+import 'react-native-gesture-handler';
+
 
 export default function RootLayout() {
   return (
@@ -23,6 +27,16 @@ export default function RootLayout() {
             title: 'Formulario de Componentes',
           }}
         />
+        
+        {/* === NUEVO MÓDULO DE CONTACTOS (Stack Navigator) === */}
+        <Drawer.Screen
+          name="contacts" // Nombre de la carpeta que contendrá la lista de contactos
+          options={{
+            title: 'Gestión de Contactos (CRUD)', // Título en el menú Drawer
+            headerShown: false, // Ocultamos el header del Drawer, el Stack interno lo manejará
+          }}
+        />
+        {/* ================================================= */}
 
         {/* --- 2. Pantalla de Perfil --- */}
         <Drawer.Screen
@@ -62,15 +76,12 @@ export default function RootLayout() {
             drawerItemStyle: { display: 'none' },
           }}
         />
-         {/* Ocultamos index si estás usando (tabs) como principal para evitar duplicados */}
-         <Drawer.Screen
+        <Drawer.Screen
           name="index"
           options={{
             drawerItemStyle: { display: 'none' },
           }}
         />
-         
-
       </Drawer>
     </GluestackUIProvider>
   );

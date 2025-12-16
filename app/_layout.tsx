@@ -6,9 +6,6 @@ import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { Drawer } from 'expo-router/drawer';
 import React from 'react';
 
-import 'react-native-gesture-handler';
-
-
 export default function RootLayout() {
   return (
     <GluestackUIProvider config={config}>
@@ -20,7 +17,7 @@ export default function RootLayout() {
           headerTitleStyle: { fontWeight: 'bold' },
         }}
       >
-        {/* --- 1. Pantalla de Componentes --- */}
+        {/* --- 1. Pantalla de Componentes (Tabs) --- */}
         <Drawer.Screen
           name="(tabs)"
           options={{
@@ -28,31 +25,23 @@ export default function RootLayout() {
           }}
         />
         
-        {/* === NUEVO MÓDULO DE CONTACTOS (Stack Navigator) === */}
+        {/* === MÓDULO DE CONTACTOS (Stack Navigator Plano) === */}
+        {/* Usamos el archivo de layout plano 'contact-stack.tsx' */}
         <Drawer.Screen
-          name="contacts" // Nombre de la carpeta que contendrá la lista de contactos
+          name="contact-stack" // <-- ¡Ruta Corregida!
           options={{
-            title: 'Gestión de Contactos (CRUD)', // Título en el menú Drawer
-            headerShown: false, // Ocultamos el header del Drawer, el Stack interno lo manejará
+            title: 'Gestión de Contactos (CRUD)', 
+            headerShown: false, // El Stack interno gestionará el encabezado
           }}
         />
         {/* ================================================= */}
 
         {/* --- 2. Pantalla de Perfil --- */}
-        <Drawer.Screen
-          name="profile"
-          options={{
-            title: 'Perfil de Usuario',
-          }}
-        />
+        <Drawer.Screen name="profile" options={{ title: 'Perfil de Usuario' }} />
 
-        {/* --- 3. NUEVA PANTALLA AÑADIDA --- */}
-        <Drawer.Screen
-          name="display"
-          options={{
-            title: 'Display',
-          }}
-        />
+        {/* --- 3. Display --- */}
+        <Drawer.Screen name="display" options={{ title: 'Display' }} />
+        
         {/* --- Pantalla de Registro en Firebase --- */}
         <Drawer.Screen
           name="PantallaRegistroFirebase"
@@ -62,12 +51,7 @@ export default function RootLayout() {
         />
 
         {/* --- 4. El Modal de ejemplo --- */}
-        <Drawer.Screen
-          name="modal"
-          options={{
-            title: '',
-          }}
-        />
+        <Drawer.Screen name="modal" options={{ title: '' }} />
 
         {/* --- 5. Pantallas ocultas del menú --- */}
         <Drawer.Screen
@@ -77,7 +61,7 @@ export default function RootLayout() {
           }}
         />
         <Drawer.Screen
-          name="index"
+          name="index" 
           options={{
             drawerItemStyle: { display: 'none' },
           }}

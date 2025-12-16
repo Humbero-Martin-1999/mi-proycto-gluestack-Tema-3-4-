@@ -1,112 +1,105 @@
-// app/ContactDetailScreen.jsx
-
-import { Building, Edit, Home, Mail, MapPin, MessageSquare, Phone, Trash2 } from 'lucide-react-native';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { Building, Edit, Home, Mail, Phone, Trash2, User } from 'lucide-react-native';
 import React from 'react';
 import { Alert, Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { deleteContact } from '../firestoreService';
 
-const DetailItem = ({ icon: IconComponent, label, value }) => (
-    <View className="flex-row items-center py-3 border-b border-gray-100">
-        <IconComponent size={24} color="#4f46e5" className="w-6 mr-4" />
-        <View className="flex-1">
-            <Text className="text-xs text-gray-500">{label}</Text>
-            <Text className="text-base font-medium">{value}</Text>
-        </View>
-    </View>
-);
+// RUTA CORREGIDA: Acceso a la subcarpeta config/ dentro de app/
+import { deleteContact } from './config/firestoreService';
 
-// Componente para los botones de acción (Punto d)
-const ActionButton = ({ icon: IconComponent, label, onPress }) => (
-    <TouchableOpacity onPress={onPress} className="items-center mx-4">
-        <View className="w-12 h-12 rounded-full bg-indigo-100 justify-center items-center mb-1">
-            <IconComponent size={24} color="#4f46e5" />
-        </View>
-        <Text className="text-sm text-indigo-600">{label}</Text>
-    </TouchableOpacity>
-);
+const ContactDetailScreen = () => {
+    const params = useLocalSearchParams();
+    const contact = params.contact ? JSON.parse(params.contact) : null;
+    const navigation = useNavigation();
 
-const ContactDetailScreen = ({ route, navigation }) => {
-    const { contact } = route.params;
+    if (!contact) {
+        return <Text className="text-center mt-10">Contacto no encontrado.</Text>;
+    }
 
-    const handleDelete = async () => {
+    const handleEdit = () => {
+        // Navegar a CRUD para editar, pasando el contacto actual
+        router.push({ pathname: '/ContactCRUDScreen', params: { contact: JSON.stringify(contact) } });
+    };
+
+    const handleDelete = () => {
         Alert.alert(
             "Confirmar Eliminación",
-            `¿Estás seguro de que quieres eliminar a ${contact.firstName} ${contact.lastName}?`,
+            `¿Estás seguro de que quieres eliminar a ${contact.firstName}?`,
             [
                 { text: "Cancelar", style: "cancel" },
-                {
-                    text: "Eliminar",
-                    style: "destructive",
+                { 
+                    text: "Eliminar", 
                     onPress: async () => {
                         await deleteContact(contact.id);
-                        navigation.goBack();
-                    },
-                },
+                        navigation.goBack(); // Volver a la lista después de eliminar
+                    }
+                }
             ]
         );
     };
-    
-    // Funciones simuladas/con intención (Punto d)
-    const handleAction = (type, value) => {
-        let url;
-        if (type === 'Call') {
-            url = `tel:${value}`;
-        } else if (type === 'Mail') {
-            url = `mailto:${value}`;
-        } else if (type === 'Message') {
-            url = `sms:${value}`;
-        }
-        
-        // La implementación real requiere manejo de errores,
-        // pero esta simulación cubre el requisito de la UI.
-        Linking.openURL(url).catch(err => console.log(`Error al abrir ${type}: ${err}`));
-    };
+
+    const DetailRow = ({ icon: IconComponent, label, value, onPress }) => (
+        <TouchableOpacity onPress={onPress} className="flex-row items-center py-3 border-b border-gray-100">
+            <View className="w-8 h-8 rounded-full bg-gray-100 justify-center items-center mr-4">
+                <IconComponent size={18} color="#4f46e5" />
+            </View>
+            <View className="flex-1">
+                <Text className="text-xs text-gray-500">{label}</Text>
+                <Text className="text-base text-gray-800">{value}</Text>
+            </View>
+        </TouchableOpacity>
+    );
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
-          headerRight: () => (
-            <View className="flex-row space-x-4">
-                {/* Icono de Lápiz para Editar (Figura 2) */}
-                <TouchableOpacity onPress={() => navigation.navigate('ContactCRUD', { contact })}>
-                    <Edit size={24} color="#4f46e5" />
-                </TouchableOpacity>
-                {/* Icono de Papelera para Borrar (Figura 2) */}
-                <TouchableOpacity onPress={handleDelete}>
-                    <Trash2 size={24} color="#dc2626" /> 
-                </TouchableOpacity>
-            </View>
-          ),
+            title: `${contact.firstName} ${contact.lastName}`,
+            headerRight: () => (
+                <View className="flex-row mr-2">
+                    <TouchableOpacity onPress={handleEdit} className="p-2">
+                        <Edit size={24} color="#3b82f6" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleDelete} className="p-2">
+                        <Trash2 size={24} color="#ef4444" />
+                    </TouchableOpacity>
+                </View>
+            ),
         });
     }, [navigation, contact]);
 
-
     return (
-        <ScrollView className="flex-1 bg-white">
-            <View className="bg-indigo-50 items-center py-8">
-                <View className="w-24 h-24 rounded-full bg-indigo-600 justify-center items-center">
-                    <Text className="text-white text-3xl font-bold">
-                        {contact.firstName?.[0] || ''}{contact.lastName?.[0] || ''}
-                    </Text>
+        <ScrollView className="flex-1 bg-white p-4">
+            <View className="items-center mb-8">
+                <View className="w-24 h-24 rounded-full bg-indigo-500 justify-center items-center mb-2">
+                    <User size={50} color="white" />
                 </View>
-                <Text className="text-2xl font-bold mt-2 text-indigo-900">
-                    {contact.firstName} {contact.lastName}
-                </Text>
+                <Text className="text-2xl font-bold">{contact.firstName} {contact.lastName}</Text>
+                <Text className="text-base text-gray-500">{contact.company}</Text>
             </View>
 
-            <View className="p-4">
-                <View className="flex-row justify-around py-4 border-b border-gray-100 mb-4">
-                    <ActionButton icon={MessageSquare} label="Message" onPress={() => handleAction('Message', contact.phone)} />
-                    <ActionButton icon={Phone} label="Call" onPress={() => handleAction('Call', contact.phone)} />
-                    <ActionButton icon={Mail} label="Mail" onPress={() => handleAction('Mail', contact.email)} />
-                </View>
-
-                {/* Detalles del contacto */}
-                <DetailItem icon={Phone} label="Phone" value={contact.phone} />
-                <DetailItem icon={Mail} label="Email" value={contact.email} />
-                <DetailItem icon={Building} label="Company" value={contact.company} />
-                <DetailItem icon={MapPin} label="City" value={contact.city} />
-                <DetailItem icon={Home} label="Address" value={contact.address} />
-                <DetailItem icon={Mail} label="Zip" value={contact.zip} />
+            <View className="mb-4">
+                <Text className="text-lg font-semibold mb-2">Información de Contacto</Text>
+                
+                <DetailRow
+                    icon={Phone}
+                    label="Teléfono"
+                    value={contact.phone}
+                    onPress={() => Linking.openURL(`tel:${contact.phone}`)}
+                />
+                <DetailRow
+                    icon={Mail}
+                    label="Correo Electrónico"
+                    value={contact.email}
+                    onPress={() => Linking.openURL(`mailto:${contact.email}`)}
+                />
+                <DetailRow
+                    icon={Home}
+                    label="Dirección"
+                    value={`${contact.address}, ${contact.city} ${contact.zip}`}
+                />
+                <DetailRow
+                    icon={Building}
+                    label="Compañía"
+                    value={contact.company}
+                />
             </View>
         </ScrollView>
     );

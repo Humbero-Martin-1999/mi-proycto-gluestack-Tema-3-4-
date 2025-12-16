@@ -1,6 +1,4 @@
-// app/contacts/index.tsx (ejemplo)
-
-// Sube de 'contacts/' (..) y entra en 'config/'
+// RUTA CORREGIDA: Accede a firebaseConfig en el mismo directorio (./)
 import {
   addDoc,
   collection,
@@ -9,13 +7,18 @@ import {
   onSnapshot,
   updateDoc,
 } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from './firebaseConfig';
 
-const contactsCollection = collection(db, 'contacts');
+const getContactsCollection = () => {
+    if (!db) {
+        throw new Error("Firestore DB no está inicializada.");
+    }
+    return collection(db, 'contacts');
+};
 
 // R - Leer (Escucha en tiempo real)
 export const getContactsStream = (callback) => {
-  return onSnapshot(contactsCollection, (snapshot) => {
+  return onSnapshot(getContactsCollection(), (snapshot) => {
     const contacts = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
@@ -29,7 +32,7 @@ export const getContactsStream = (callback) => {
 // C - Crear
 export const createContact = async (contactData) => {
   try {
-    await addDoc(contactsCollection, contactData);
+    await addDoc(getContactsCollection(), contactData);
   } catch (e) {
     console.error("Error al crear contacto: ", e);
   }

@@ -1,40 +1,37 @@
+// app/PantallaRegistroFirebase.tsx
+
 import React, { useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+// Importamos las funciones y tipos de Realtime Database
+import { Database, getDatabase, ref, set } from 'firebase/database';
 
-// Importamos las funciones de Realtime Database
-import { Database, getDatabase, ref, set } from 'firebase/database'; // Importar getDatabase y Database
-
-// Importamos la aplicación base que tiene la configuración (Subiendo dos niveles a la raíz/config)
-import { firebaseApp } from './config/firebaseConfig'; // <-- Usamos firebaseApp
+// RUTA CORREGIDA: Acceso a la subcarpeta config/ dentro de app/
+import { firebaseApp } from './config/firebaseConfig';
 
 const PantallaRegistroFirebase = () => {
-    // Inicializamos Realtime Database (RTDB) localmente usando la aplicación base
-    // Esto resuelve el error de tipado TS2345
+    // Inicializamos Realtime Database (RTDB) localmente
     const rtdb: Database = getDatabase(firebaseApp); 
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
 
     const createData = () => {
-        // Validación simple
         if (username.length === 0 || email.length === 0) {
             Alert.alert("Faltan datos", "Por favor escribe usuario y correo");
             return;
         }
 
-        // Guarda en el nodo 'users/' usando la instancia rtdb
-        set(ref(rtdb, 'users/' + username), { // <-- Usamos 'rtdb' en lugar de 'db'
+        // Usamos la instancia rtdb para Realtime Database
+        set(ref(rtdb, 'users/' + username), { 
             username: username,
-            email: email
+            email: email,
         })
         .then(() => {
-            // Si sale bien:
             Alert.alert("¡Éxito!", "Usuario registrado en Firebase");
-            setUsername(''); // Limpiar campos
+            setUsername(''); 
             setEmail('');
         })
         .catch((error) => {
-            // Si sale mal:
             console.log(error);
             Alert.alert("Error", "Algo falló: " + error.message);
         });
